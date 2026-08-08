@@ -3,22 +3,33 @@ import "./ConferenceEvent.css";
 import TotalCost from "./TotalCost";
 import { useSelector, useDispatch } from "react-redux";
 import { incrementQuantity, decrementQuantity } from "./venueSlice";
+import { incrementAvQuantity, decrementAvQuantity} from "./avSlice";
+
+
 const ConferenceEvent = () => {
     const [showItems, setShowItems] = useState(false);
     const [numberOfPeople, setNumberOfPeople] = useState(1);
-    const venueItems = useSelector((state) => state.venue);
-    const dispatch = useDispatch();
-    const remainingAuditoriumQuantity = 3 - venueItems.find(item => item.name === "Auditorium Hall (Capacity:200)").quantity;
+    const venueItems = useSelector((state) => state.venue); // retrieves items from the Redux store state
+    const avItems = useSelector((state) => state.av);
 
     
+    const dispatch = useDispatch();
+
+    
+
+    //makes sure user cant request more than 3 
+    const remainingAuditoriumQuantity = 3 - venueItems.find(item => item.name === "Auditorium Hall (Capacity:200)").quantity;
+
+
     const handleToggleItems = () => {
         console.log("handleToggleItems called");
         setShowItems(!showItems);
     };
 
+        //defining the handleAddToCart and  handleRemoveFromCart functions for the increase and decrease quantity
     const handleAddToCart = (index) => {
         if (venueItems[index].name === "Auditorium Hall (Capacity:200)" && venueItems[index].quantity >= 3) {
-          return; 
+          return; // prevents further additions
         }
         dispatch(incrementQuantity(index));
       };
@@ -47,16 +58,18 @@ const ConferenceEvent = () => {
     const ItemsDisplay = ({ items }) => {
 
     };
+
+    
     const calculateTotalCost = (section) => {
-        let totalCost = 0;
-        if (section === "venue") {
-          venueItems.forEach((item) => {
+        let totalCost = 0; // initializes the totalCost with a vlaue of 0
+        if (section === "venue") { // checks if section passed as an arguement is equal to the string 'venue'
+          venueItems.forEach((item) => { //  iterates for Each itme in the venueItems array perform the calculation below
             totalCost += item.cost * item.quantity;
           });
         }
-        return totalCost;
+        return totalCost; // just returns the total cost from calculation above
       };
-    const venueTotalCost = calculateTotalCost("venue");
+    const venueTotalCost = calculateTotalCost("venue"); // this stores the calculateTotalCost for "venue" into its own constant variable
 
     const navigateToProducts = (idType) => {
         if (idType == '#venue' || idType == '#addons' || idType == '#meals') {
